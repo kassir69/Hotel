@@ -22,6 +22,16 @@ function App() {
     if (stored) setUser(JSON.parse(stored));
   }, []);
 
+  // ✅ Déconnexion automatique à la fermeture
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
   const handleLogin  = (userData) => setUser(userData);
   const handleLogout = () => { localStorage.removeItem("token"); localStorage.removeItem("user"); setUser(null); };
 
