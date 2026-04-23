@@ -13,7 +13,13 @@ const CHAMBRES = [
   { type: "Petite Chambre Ventilée",  prix: 5000  },
 ];
 
-const today = () => new Date().toISOString().split("T")[0];
+const today = () => {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
 
 export default function Recettes() {
   const [showForm, setShowForm]   = useState(false);
@@ -134,19 +140,19 @@ export default function Recettes() {
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition" />
             </div>
 
-           <div>
+            <div>
               <label className="text-sm text-gray-600 font-medium block mb-1">Mode de paiement</label>
               <select value={formData.modePaiement}
                 onChange={e => setFormData(p => ({ ...p, modePaiement: e.target.value }))}
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition bg-white">
-                <option value="" disabled>-- Choisir un mode --</option>
-                <option>Comptant</option>
-                <option>Orange Money</option>
                 <option>Wave</option>
-                <option>Carte de débit ou crédit</option>
+                <option>Orange Money</option>
+                <option>Carte de crédit</option>
+                <option>Carte de débit</option>
               </select>
             </div>
-                        <div className="md:col-span-2">
+
+            <div className="md:col-span-2">
               <label className="text-sm text-gray-600 font-medium block mb-1">Montant total</label>
               <input value={`${montantTotal.toLocaleString("fr-FR")} FCFA`} readOnly
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm bg-gray-50 text-primary font-bold text-lg" />
@@ -169,9 +175,9 @@ export default function Recettes() {
       {/* Tableau */}
       <div>
         <h2 className="font-display text-xl text-gray-800 font-bold mb-4">Liste des réservations</h2>
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100" style={{ maxHeight: "420px", overflowY: "auto" }}>
           <table className="min-w-full">
-            <thead className="bg-primary text-white">
+            <thead className="bg-primary text-white sticky top-0">
               <tr>
                 {["Client","Téléphone","Chambre","Date séjour","Nuits","Montant","Paiement","Action"].map(h => (
                   <th key={h} className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">{h}</th>
@@ -185,7 +191,10 @@ export default function Recettes() {
                   <td className="py-3 px-4 text-sm text-gray-500">{r.telephone}</td>
                   <td className="py-3 px-4 text-sm text-gray-600">{r.chambreType}</td>
                   <td className="py-3 px-4 text-sm text-gray-600">
-                    {r.dateDebut ? new Date(r.dateDebut).toLocaleDateString("fr-FR") : "—"}
+                    {r.dateDebut ? (() => {
+                      const d = new Date(r.dateDebut);
+                      return new Date(d.getTime() + d.getTimezoneOffset() * 60000).toLocaleDateString("fr-FR");
+                    })() : "—"}
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">{r.nuits}</td>
                   <td className="py-3 px-4 text-sm font-bold text-green-700">{r.montantTotal?.toLocaleString("fr-FR")} F</td>
