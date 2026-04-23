@@ -12,6 +12,7 @@ import Depenses from "./pages/Depenses";
 import RapportFinancier from "./pages/admin/RapportFinancier";
 import GestionUtilisateurs from "./pages/admin/GestionUtilisateurs";
 import Clients from "./pages/admin/Clients";
+import DepensesAdmin from "./pages/admin/DepensesAdmin";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -41,9 +42,10 @@ function App() {
               <Route path="/recettes" element={<PrivateRoute user={user}><Recettes /></PrivateRoute>} />
               <Route path="/depenses" element={<PrivateRoute user={user}><Depenses /></PrivateRoute>} />
 
-              <Route path="/rapport"       element={<PrivateRoute user={user} role="admin"><RapportFinancier /></PrivateRoute>} />
-              <Route path="/utilisateurs"  element={<PrivateRoute user={user} role="admin"><GestionUtilisateurs /></PrivateRoute>} />
-              <Route path="/clients"       element={<PrivateRoute user={user} role="admin"><Clients /></PrivateRoute>} />
+              <Route path="/rapport"        element={<PrivateRoute user={user} role="admin"><RapportFinancier /></PrivateRoute>} />
+              <Route path="/utilisateurs"   element={<PrivateRoute user={user} role="admin"><GestionUtilisateurs /></PrivateRoute>} />
+              <Route path="/clients"        element={<PrivateRoute user={user} role="admin"><Clients /></PrivateRoute>} />
+              <Route path="/depenses-admin" element={<PrivateRoute user={user} role="admin"><DepensesAdmin /></PrivateRoute>} />
 
               <Route path="*" element={<Navigate to={isLoggedIn ? "/" : "/login"} />} />
             </Routes>

@@ -12,10 +12,11 @@ export default function Sidebar({ user }) {
   ];
 
   const adminLinks = [
-    { to: "/",            icon: <LayoutDashboard size={18} />, label: "Dashboard" },
-    { to: "/clients",     icon: <UserCheck size={18} />,       label: "Clients" },
-    { to: "/rapport",     icon: <FileText size={18} />,        label: "Rapport financier" },
-    { to: "/utilisateurs",icon: <Users size={18} />,           label: "Utilisateurs" },
+    { to: "/",              icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+    { to: "/clients",       icon: <UserCheck size={18} />,       label: "Clients" },
+    { to: "/depenses-admin",icon: <ArrowDownCircle size={18} />, label: "Dépenses" },
+    { to: "/rapport",       icon: <FileText size={18} />,        label: "Rapport financier" },
+    { to: "/utilisateurs",  icon: <Users size={18} />,           label: "Utilisateurs" },
   ];
 
   const links = user?.role === "admin" ? adminLinks : employeLinks;
