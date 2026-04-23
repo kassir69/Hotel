@@ -10,7 +10,7 @@ const CHAMBRES = [
   { type: "Studio Ventilé",           prix: 7000  },
   { type: "Grande Chambre Climatisée",prix: 10000 },
   { type: "Grande Chambre Ventilée",  prix: 7000  },
-  { type: "Petite Chambre Climatisée",prix: 10000 },
+  { type: "Petite Chambre Climatisée",prix: 8000 },
   { type: "Petite Chambre Ventilée",  prix: 5000  },
 ];
 
