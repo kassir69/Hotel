@@ -1,29 +1,40 @@
 // routes/recettes.js
 import express from "express";
-import Recette, { PRIX_CHAMBRES } from "../models/Recette.js";
+import Recette, { CHAMBRES } from "../models/Recette.js";
 import { verifyToken } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// POST /api/recettes — enregistrer une réservation
+// POST /api/recettes
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const { chambreType, nom, telephone, nuits, dateDebut, modePaiement } = req.body;
-    if (!chambreType || !nom || !telephone || !nuits || !dateDebut || !modePaiement)
-      return res.status(400).json({ message: "Tous les champs sont requis, y compris le mode de paiement." });
+    const { numChambre, nom, telephone, dateDebut, dateDepart, modePaiement } = req.body;
+    if (!numChambre || !nom || !telephone || !dateDebut || !dateDepart)
+      return res.status(400).json({ message: "Tous les champs sont requis." });
 
-    const prixParNuit = PRIX_CHAMBRES[chambreType];
-    if (!prixParNuit)
-      return res.status(400).json({ message: "Type de chambre invalide." });
+    const chambre = CHAMBRES.find(c => c.num === Number(numChambre));
+    if (!chambre) return res.status(400).json({ message: "Chambre introuvable." });
 
-    const montantTotal = prixParNuit * Number(nuits);
+    const debut   = new Date(dateDebut);
+    const depart  = new Date(dateDepart);
+    const nuits   = Math.max(1, Math.round((depart - debut) / (1000 * 60 * 60 * 24)));
+    const montantTotal = chambre.prix * nuits;
+
+    // Vérifier que la chambre n'est pas déjà occupée sur cette période
+    const conflit = await Recette.findOne({
+      numChambre: Number(numChambre),
+      dateDebut:  { $lt: depart },
+      dateDepart: { $gt: debut },
+    });
+    if (conflit) return res.status(409).json({ message: `Chambre ${numChambre} déjà occupée sur cette période.` });
+
     const recette = await Recette.create({
-      chambreType, nom, telephone,
-      nuits: Number(nuits),
-      prixParNuit,
-      montantTotal,
-      dateDebut: new Date(dateDebut),
-      modePaiement,
+      numChambre: Number(numChambre),
+      chambreType: chambre.type,
+      prixParNuit: chambre.prix,
+      nom, telephone, dateDebut: debut, dateDepart: depart,
+      nuits, montantTotal,
+      modePaiement: modePaiement || "Comptant",
       createdBy: req.user.id,
     });
 
@@ -34,18 +45,10 @@ router.post("/", verifyToken, async (req, res) => {
   }
 });
 
-// GET /api/recettes — liste des réservations filtrées par mois
+// GET /api/recettes
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const now = new Date();
-    const month = parseInt(req.query.month) || now.getMonth() + 1;
-    const year  = parseInt(req.query.year)  || now.getFullYear();
-
-    const debut = new Date(year, month - 1, 1);
-    const fin   = new Date(year, month, 1);
-
-    const recettes = await Recette.find({ dateDebut: { $gte: debut, $lt: fin } })
-      .sort({ dateDebut: -1 });
+    const recettes = await Recette.find().sort({ date: -1 });
     res.json(recettes);
   } catch (err) {
     res.status(500).json({ message: "Erreur serveur." });
