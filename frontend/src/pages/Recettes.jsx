@@ -17,7 +17,7 @@ const today = () => new Date().toISOString().split("T")[0];
 
 export default function Recettes() {
   const [showForm, setShowForm]   = useState(false);
-  const [formData, setFormData]   = useState({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "Wave" });
+  const [formData, setFormData]   = useState({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "" });
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading]     = useState(false);
 
@@ -38,7 +38,7 @@ export default function Recettes() {
   useEffect(() => { fetchReservations(); }, []);
 
   const handleReserver = (type) => {
-    setFormData({ chambreType: type, nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "Wave" });
+    setFormData({ chambreType: type, nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "" });
     setShowForm(true);
     setTimeout(() => document.getElementById("form-resa")?.scrollIntoView({ behavior: "smooth" }), 100);
   };
@@ -54,7 +54,7 @@ export default function Recettes() {
       });
       if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
       setShowForm(false);
-      setFormData({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "Wave" });
+      setFormData({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "" });
       fetchReservations();
     } catch (err) { alert("Erreur : " + err.message); }
     finally { setLoading(false); }

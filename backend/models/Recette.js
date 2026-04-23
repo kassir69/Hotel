@@ -18,12 +18,11 @@ const recetteSchema = new mongoose.Schema({
   nuits: { type: Number, required: true, min: 1 },
   montantTotal: { type: Number, required: true },
   dateDebut: { type: Date, required: true },
-  modePaiement: {
-    type: String,
-    enum: ["Carte de crédit", "Carte de débit", "Wave", "Orange Money"],
-    required: true,
-    default: "Wave",
-  },
+ modePaiement: {
+  type: String,
+  enum: ["Comptant", "Carte de débit ou crédit", "Wave", "Orange Money"],
+  required: true,
+},
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   date: { type: Date, default: Date.now },
 }, { timestamps: true });
