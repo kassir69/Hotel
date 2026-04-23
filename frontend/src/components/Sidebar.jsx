@@ -1,6 +1,6 @@
 // components/Sidebar.jsx
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, DollarSign, ArrowDownCircle, FileText, Users } from "lucide-react";
+import { LayoutDashboard, DollarSign, ArrowDownCircle, FileText, Users, UserCheck } from "lucide-react";
 
 export default function Sidebar({ user }) {
   const location = useLocation();
@@ -13,6 +13,7 @@ export default function Sidebar({ user }) {
 
   const adminLinks = [
     { to: "/",            icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+    { to: "/clients",     icon: <UserCheck size={18} />,       label: "Clients" },
     { to: "/rapport",     icon: <FileText size={18} />,        label: "Rapport financier" },
     { to: "/utilisateurs",icon: <Users size={18} />,           label: "Utilisateurs" },
   ];

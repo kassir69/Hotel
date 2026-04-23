@@ -17,7 +17,7 @@ const today = () => new Date().toISOString().split("T")[0];
 
 export default function Recettes() {
   const [showForm, setShowForm]   = useState(false);
-  const [formData, setFormData]   = useState({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today() });
+  const [formData, setFormData]   = useState({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "Wave" });
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading]     = useState(false);
 
@@ -38,7 +38,7 @@ export default function Recettes() {
   useEffect(() => { fetchReservations(); }, []);
 
   const handleReserver = (type) => {
-    setFormData({ chambreType: type, nom: "", telephone: "", nuits: 1, dateDebut: today() });
+    setFormData({ chambreType: type, nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "Wave" });
     setShowForm(true);
     setTimeout(() => document.getElementById("form-resa")?.scrollIntoView({ behavior: "smooth" }), 100);
   };
@@ -54,7 +54,7 @@ export default function Recettes() {
       });
       if (!res.ok) { const d = await res.json(); throw new Error(d.message); }
       setShowForm(false);
-      setFormData({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today() });
+      setFormData({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "Wave" });
       fetchReservations();
     } catch (err) { alert("Erreur : " + err.message); }
     finally { setLoading(false); }
@@ -134,6 +134,18 @@ export default function Recettes() {
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition" />
             </div>
 
+            <div>
+              <label className="text-sm text-gray-600 font-medium block mb-1">Mode de paiement</label>
+              <select value={formData.modePaiement}
+                onChange={e => setFormData(p => ({ ...p, modePaiement: e.target.value }))}
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition bg-white">
+                <option>Wave</option>
+                <option>Orange Money</option>
+                <option>Carte de crédit</option>
+                <option>Carte de débit</option>
+              </select>
+            </div>
+
             <div className="md:col-span-2">
               <label className="text-sm text-gray-600 font-medium block mb-1">Montant total</label>
               <input value={`${montantTotal.toLocaleString("fr-FR")} FCFA`} readOnly
@@ -161,7 +173,7 @@ export default function Recettes() {
           <table className="min-w-full">
             <thead className="bg-primary text-white">
               <tr>
-                {["Client","Téléphone","Chambre","Date séjour","Nuits","Montant","Action"].map(h => (
+                {["Client","Téléphone","Chambre","Date séjour","Nuits","Montant","Paiement","Action"].map(h => (
                   <th key={h} className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -178,13 +190,20 @@ export default function Recettes() {
                   <td className="py-3 px-4 text-sm text-gray-600">{r.nuits}</td>
                   <td className="py-3 px-4 text-sm font-bold text-green-700">{r.montantTotal?.toLocaleString("fr-FR")} F</td>
                   <td className="py-3 px-4">
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                      r.modePaiement === "Wave" ? "bg-blue-100 text-blue-700" :
+                      r.modePaiement === "Orange Money" ? "bg-orange-100 text-orange-700" :
+                      "bg-gray-100 text-gray-600"
+                    }`}>{r.modePaiement || "—"}</span>
+                  </td>
+                  <td className="py-3 px-4">
                     <button onClick={() => handleDelete(r._id)} className="text-red-400 hover:text-red-600 transition p-1 rounded">
                       <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
               )) : (
-                <tr><td colSpan={7} className="py-8 text-center text-gray-400 text-sm">Aucune réservation.</td></tr>
+                <tr><td colSpan={8} className="py-8 text-center text-gray-400 text-sm">Aucune réservation.</td></tr>
               )}
             </tbody>
           </table>

@@ -17,9 +17,15 @@ const recetteSchema = new mongoose.Schema({
   telephone: { type: String, required: true },
   nuits: { type: Number, required: true, min: 1 },
   montantTotal: { type: Number, required: true },
-  dateDebut: { type: Date, required: true }, // ← date de début du séjour choisie
+  dateDebut: { type: Date, required: true },
+  modePaiement: {
+    type: String,
+    enum: ["Carte de crédit", "Carte de débit", "Wave", "Orange Money"],
+    required: true,
+    default: "Wave",
+  },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  date: { type: Date, default: Date.now }, // date d'enregistrement
+  date: { type: Date, default: Date.now },
 }, { timestamps: true });
 
 export { PRIX_CHAMBRES };

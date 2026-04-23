@@ -8,9 +8,9 @@ const router = express.Router();
 // POST /api/recettes — enregistrer une réservation
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const { chambreType, nom, telephone, nuits, dateDebut } = req.body;
-    if (!chambreType || !nom || !telephone || !nuits || !dateDebut)
-      return res.status(400).json({ message: "Tous les champs sont requis, y compris la date de début." });
+    const { chambreType, nom, telephone, nuits, dateDebut, modePaiement } = req.body;
+    if (!chambreType || !nom || !telephone || !nuits || !dateDebut || !modePaiement)
+      return res.status(400).json({ message: "Tous les champs sont requis, y compris le mode de paiement." });
 
     const prixParNuit = PRIX_CHAMBRES[chambreType];
     if (!prixParNuit)
@@ -23,6 +23,7 @@ router.post("/", verifyToken, async (req, res) => {
       prixParNuit,
       montantTotal,
       dateDebut: new Date(dateDebut),
+      modePaiement,
       createdBy: req.user.id,
     });
 
