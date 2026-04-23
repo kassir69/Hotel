@@ -21,11 +21,8 @@ export default function Sidebar({ user }) {
 
   return (
     <div className="w-60 bg-primary text-white flex flex-col h-full shadow-xl">
-      <div className="px-6 py-8 border-b border-white/10">
-        <h1 className="font-display text-xl text-white leading-tight">Finance<br />Hôtel</h1>
-        <span className="text-xs text-white/50 mt-1 block uppercase tracking-widest">
-          {user?.role === "admin" ? "Administrateur" : "Réceptionniste"}
-        </span>
+      <div className="px-4 py-6 border-b border-white/10 flex justify-center">
+        <img src="/Logo.png" alt="Hôtel Appolon" className="h-20 object-contain" />
       </div>
       <nav className="flex-1 px-4 py-6 space-y-1">
         {links.map(({ to, icon, label }) => {
