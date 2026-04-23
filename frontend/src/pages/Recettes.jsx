@@ -1,6 +1,8 @@
 // pages/Recettes.jsx
 import { useState, useEffect } from "react";
-import { Trash2, ChevronRight } from "lucide-react";
+import { Trash2, ChevronRight, ChevronLeft } from "lucide-react";
+
+const MOIS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -13,7 +15,7 @@ const CHAMBRES_PAR_TYPE = [
   { type: "Petite Chambre Ventilée",   prix: 5000,  nums: [12, 13]    },
 ];
 
-const MODES_PAIEMENT = ["Comptant", "Wave", "Orange Money", "Carte de débit"];
+const MODES_PAIEMENT = ["Comptant", "Wave", "Orange Money", "Carte de débit", "Carte de crédit"];
 
 const today = () => {
   const d = new Date();
@@ -40,6 +42,8 @@ export default function Recettes() {
   });
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filtreMonth, setFiltreMonth] = useState(new Date().getMonth() + 1);
+  const [filtreYear,  setFiltreYear]  = useState(new Date().getFullYear());
 
   const token   = localStorage.getItem("token");
   const headers = { Authorization: `Bearer ${token}` };
@@ -272,7 +276,47 @@ export default function Recettes() {
 
       {/* Tableau des réservations */}
       <div>
-        <h2 className="font-display text-xl text-gray-800 font-bold mb-4">Liste des réservations</h2>
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h2 className="font-display text-xl text-gray-800 font-bold">Liste des réservations</h2>
+          {/* Sélecteur mois */}
+          <div className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl px-4 py-2 shadow-sm">
+            <button onClick={() => {
+              if (filtreMonth === 1) { setFiltreMonth(12); setFiltreYear(y => y - 1); }
+              else setFiltreMonth(m => m - 1);
+            }} className="text-gray-400 hover:text-primary transition">
+              <ChevronLeft size={18} />
+            </button>
+            <span className="font-semibold text-gray-700 text-sm min-w-[130px] text-center">
+              {MOIS[filtreMonth - 1]} {filtreYear}
+            </span>
+            <button onClick={() => {
+              if (filtreMonth === 12) { setFiltreMonth(1); setFiltreYear(y => y + 1); }
+              else setFiltreMonth(m => m + 1);
+            }} className="text-gray-400 hover:text-primary transition">
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+
+        {(() => {
+          const resFiltrees = reservations.filter(r => {
+            if (!r.dateDebut) return false;
+            const d = new Date(r.dateDebut);
+            return d.getMonth() + 1 === filtreMonth && d.getFullYear() === filtreYear;
+          });
+          const totalMois = resFiltrees.reduce((s, r) => s + (r.montantTotal || 0), 0);
+          return (
+        <>
+        {resFiltrees.length > 0 && (
+          <div className="flex gap-3 mb-3">
+            <span className="text-xs bg-blue-50 text-blue-700 font-semibold px-3 py-1.5 rounded-full">
+              {resFiltrees.length} réservation{resFiltrees.length > 1 ? "s" : ""}
+            </span>
+            <span className="text-xs bg-green-50 text-green-700 font-semibold px-3 py-1.5 rounded-full">
+              {totalMois.toLocaleString("fr-FR")} FCFA
+            </span>
+          </div>
+        )}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100" style={{ maxHeight: "420px", overflowY: "auto" }}>
           <table className="min-w-full">
             <thead className="bg-primary text-white sticky top-0">
@@ -283,7 +327,7 @@ export default function Recettes() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {reservations.length > 0 ? reservations.map(r => (
+              {resFiltrees.length > 0 ? resFiltrees.map(r => (
                 <tr key={r._id} className="hover:bg-gray-50 transition">
                   <td className="py-3 px-3 text-sm font-bold text-primary">#{r.numChambre || "—"}</td>
                   <td className="py-3 px-3 text-sm font-medium text-gray-800">{r.nom}</td>
@@ -313,7 +357,10 @@ export default function Recettes() {
             </tbody>
           </table>
         </div>
-      </div>
+        </>
+      );
+    })()}
     </div>
-  );
+  </div>
+);
 }
