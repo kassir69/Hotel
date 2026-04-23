@@ -41,8 +41,8 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-primary px-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl text-primary font-bold">Finance Hôtel</h1>
-          <p className="text-gray-400 text-sm mt-2">Créer un compte réceptionniste</p>
+          <img src="/Logo.png" alt="Hôtel Appolon" className="h-24 object-contain mx-auto mb-4" />
+          <p className="text-gray-400 text-sm">Créer un compte réceptionniste</p>
         </div>
 
         {error && <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg mb-4">{error}</div>}
