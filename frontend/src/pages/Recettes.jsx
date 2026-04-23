@@ -115,15 +115,25 @@ export default function Recettes() {
 
             <div>
               <label className="text-sm text-gray-600 font-medium block mb-1">Nom du client</label>
-              <input type="text" required value={formData.nom}
+              <input
+                type="text"
+                required
+                autoComplete="off"
+                value={formData.nom}
                 onChange={e => setFormData(p => ({ ...p, nom: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition" />
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition"
+              />
             </div>
             <div>
               <label className="text-sm text-gray-600 font-medium block mb-1">Téléphone</label>
-              <input type="tel" required value={formData.telephone}
+              <input
+                type="tel"
+                required
+                autoComplete="off"
+                value={formData.telephone}
                 onChange={e => setFormData(p => ({ ...p, telephone: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition" />
+                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition"
+              />
             </div>
 
             <div>
@@ -134,10 +144,27 @@ export default function Recettes() {
             </div>
             <div>
               <label className="text-sm text-gray-600 font-medium block mb-1">Nombre de nuits</label>
-              <input type="text" inputMode="numeric" required value={formData.nuits}
-                onChange={e => setFormData(p => ({ ...p, nuits: e.target.value.replace(/[^0-9]/g,"") || 1 }))}
-                onFocus={e => e.target.select()}
-                className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition" />
+              <div className="flex items-center gap-2">
+                <button type="button"
+                  onClick={() => setFormData(p => ({ ...p, nuits: Math.max(1, Number(p.nuits) - 1) }))}
+                  className="w-10 h-10 bg-gray-100 rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-200 transition flex items-center justify-center">
+                  −
+                </button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  value={formData.nuits}
+                  onChange={e => setFormData(p => ({ ...p, nuits: e.target.value.replace(/[^0-9]/g, "") || 1 }))}
+                  onFocus={e => e.target.select()}
+                  className="flex-1 border border-gray-200 rounded-lg px-4 py-3 text-sm text-center focus:outline-none focus:border-primary transition"
+                />
+                <button type="button"
+                  onClick={() => setFormData(p => ({ ...p, nuits: Number(p.nuits) + 1 }))}
+                  className="w-10 h-10 bg-gray-100 rounded-lg text-lg font-bold text-gray-600 hover:bg-gray-200 transition flex items-center justify-center">
+                  +
+                </button>
+              </div>
             </div>
 
             <div>
