@@ -34,10 +34,18 @@ router.post("/", verifyToken, async (req, res) => {
   }
 });
 
-// GET /api/recettes — liste des réservations du jour
+// GET /api/recettes — liste des réservations filtrées par mois
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const recettes = await Recette.find().sort({ date: -1 });
+    const now = new Date();
+    const month = parseInt(req.query.month) || now.getMonth() + 1;
+    const year  = parseInt(req.query.year)  || now.getFullYear();
+
+    const debut = new Date(year, month - 1, 1);
+    const fin   = new Date(year, month, 1);
+
+    const recettes = await Recette.find({ dateDebut: { $gte: debut, $lt: fin } })
+      .sort({ dateDebut: -1 });
     res.json(recettes);
   } catch (err) {
     res.status(500).json({ message: "Erreur serveur." });

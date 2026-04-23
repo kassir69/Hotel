@@ -1,8 +1,9 @@
 // pages/Recettes.jsx
 import { useState, useEffect } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const MOIS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
 const CHAMBRES = [
   { type: "Studio Climatisé",         prix: 12000 },
@@ -22,6 +23,9 @@ const today = () => {
 };
 
 export default function Recettes() {
+  const now = new Date();
+  const [month, setMonth] = useState(now.getMonth() + 1);
+  const [year,  setYear]  = useState(now.getFullYear());
   const [showForm, setShowForm]   = useState(false);
   const [formData, setFormData]   = useState({ chambreType: "", nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "" });
   const [reservations, setReservations] = useState([]);
@@ -33,15 +37,18 @@ export default function Recettes() {
   const token   = localStorage.getItem("token");
   const headers = { Authorization: `Bearer ${token}` };
 
+  const prevMonth = () => { if (month === 1) { setMonth(12); setYear(y => y-1); } else setMonth(m => m-1); };
+  const nextMonth = () => { if (month === 12) { setMonth(1); setYear(y => y+1); } else setMonth(m => m+1); };
+
   const fetchReservations = async () => {
     try {
-      const res  = await fetch(`${API}/api/recettes`, { headers });
+      const res  = await fetch(`${API}/api/recettes?month=${month}&year=${year}`, { headers });
       const data = await res.json();
       setReservations(Array.isArray(data) ? data : []);
     } catch (err) { console.error(err); }
   };
 
-  useEffect(() => { fetchReservations(); }, []);
+  useEffect(() => { fetchReservations(); }, [month, year]);
 
   const handleReserver = (type) => {
     setFormData({ chambreType: type, nom: "", telephone: "", nuits: 1, dateDebut: today(), modePaiement: "" });
@@ -71,6 +78,8 @@ export default function Recettes() {
     await fetch(`${API}/api/recettes/${id}`, { method: "DELETE", headers });
     fetchReservations();
   };
+
+  const totalMois = reservations.reduce((s, r) => s + (r.montantTotal || 0), 0);
 
   return (
     <div className="p-6 space-y-8">
@@ -201,7 +210,20 @@ export default function Recettes() {
 
       {/* Tableau */}
       <div>
-        <h2 className="font-display text-xl text-gray-800 font-bold mb-4">Liste des réservations</h2>
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          <h2 className="font-display text-xl text-gray-800 font-bold">Liste des réservations</h2>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 bg-white border border-gray-100 rounded-2xl px-4 py-2.5 shadow-sm">
+              <button onClick={prevMonth} className="text-gray-400 hover:text-primary transition"><ChevronLeft size={18}/></button>
+              <span className="font-semibold text-gray-800 text-sm min-w-[120px] text-center">{MOIS[month-1]} {year}</span>
+              <button onClick={nextMonth} className="text-gray-400 hover:text-primary transition"><ChevronRight size={18}/></button>
+            </div>
+            <div className="bg-green-50 border border-green-100 rounded-2xl px-4 py-2.5">
+              <span className="text-green-700 text-sm font-bold">{totalMois.toLocaleString("fr-FR")} F</span>
+              <span className="text-green-500 text-xs ml-1">ce mois</span>
+            </div>
+          </div>
+        </div>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100" style={{ maxHeight: "420px", overflowY: "auto" }}>
           <table className="min-w-full">
             <thead className="bg-primary text-white sticky top-0">
