@@ -134,19 +134,19 @@ export default function Recettes() {
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition" />
             </div>
 
-            <div>
+           <div>
               <label className="text-sm text-gray-600 font-medium block mb-1">Mode de paiement</label>
               <select value={formData.modePaiement}
                 onChange={e => setFormData(p => ({ ...p, modePaiement: e.target.value }))}
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-primary transition bg-white">
-                <option>Wave</option>
+                <option value="" disabled>-- Choisir un mode --</option>
+                <option>Comptant</option>
                 <option>Orange Money</option>
-                <option>Carte de crédit</option>
-                <option>Carte de débit</option>
+                <option>Wave</option>
+                <option>Carte de débit ou crédit</option>
               </select>
             </div>
-
-            <div className="md:col-span-2">
+                        <div className="md:col-span-2">
               <label className="text-sm text-gray-600 font-medium block mb-1">Montant total</label>
               <input value={`${montantTotal.toLocaleString("fr-FR")} FCFA`} readOnly
                 className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm bg-gray-50 text-primary font-bold text-lg" />
